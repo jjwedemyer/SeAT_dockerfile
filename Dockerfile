@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
 	git \
 	language-pack-en-base \
 	mysql-server \
+	nano \
 	redis-server \
 	screen \
 	supervisor \
@@ -51,7 +52,6 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') && \
 	chown -R www-data:www-data /var/www/seat && \
 	chmod -R guo+w /var/www/seat/storage/ && \
 	cd /var/www/seat && \
-	sed -i -r "s/DB_HOST=homestead/DB_HOST=127.0.0.1/" /var/www/seat/.env && \
 	sed -i -r "s/DB_DATABASE=homestead/DB_DATABASE=seat/" /var/www/seat/.env && \
 	sed -i -r "s/DB_USERNAME=homestead/DB_USERNAME=seat/" /var/www/seat/.env && \
 	sed -i -r "s/DB_PASSWORD=secret/DB_PASSWORD=$SEAT_DB_PASS/" /var/www/seat/.env && \
@@ -72,8 +72,6 @@ ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
 ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
 ADD /static/crontab /app/crontab
 
-
-#redis-server --daemonize yes
 RUN touch /root/startup.sh && chmod +x /root/startup.sh && \
 	echo "#!/bin/bash" >> /root/startup.sh &&\
 	echo "service supervisor start && supervisorctl reload && apachectl start" \
