@@ -10,7 +10,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 #"export LC_ALL=en_US.UTF-8 && export LANG=en_US.UTF-8" to set up the UTF-8 language sets
 #add-apt-repository php5-5.6 ppa
 #install ppa:ondrej packages
-#RUN echo 'Acquire::http { Proxy "http://172.17.0.2:3142"; };' >> /etc/apt/apt.conf.d/01proxy && \
+#RUN echo 'Acquire::http { Proxy "http://172.17.0.2:3142"; };' >> /etc/apt/apt.conf.d/01proxy
 RUN apt-get update && apt-get install -y \
 	curl \
 	expect \ 
@@ -51,6 +51,7 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') && \
 	chown -R www-data:www-data /var/www/seat && \
 	chmod -R guo+w /var/www/seat/storage/ && \
 	cd /var/www/seat && \
+	sed -i -r "s/DB_HOST=homestead/DB_HOST=127.0.0.1/" /var/www/seat/.env && \
 	sed -i -r "s/DB_DATABASE=homestead/DB_DATABASE=seat/" /var/www/seat/.env && \
 	sed -i -r "s/DB_USERNAME=homestead/DB_USERNAME=seat/" /var/www/seat/.env && \
 	sed -i -r "s/DB_PASSWORD=secret/DB_PASSWORD=$SEAT_DB_PASS/" /var/www/seat/.env && \
@@ -71,6 +72,20 @@ ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
 ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
 ADD /static/crontab /app/crontab
 
+
+#redis-server --daemonize yes
+RUN touch /root/startup.sh && chmod +x /root/startup.sh && \
+	echo "#!/bin/bash" >> /root/startup.sh &&\
+	echo "service supervisor start && supervisorctl reload && apachectl start" \
+	>> /root/startup.sh && \
+	touch /root/seatup.sh && chmod +x /root/seatup.sh && \
+	echo "#!/bin/bash" >> /root/seatup.sh && \
+	echo "cd /var/www/seat" >> /root/seatup.sh && \
+	echo "service mysql start && redis-server --daemonize yes" >> /root/seatup.sh && \
+	echo "php artisan seat:admin:reset" >> /root/seatup.sh && \
+	echo "php artisan seat:admin:email" >> /root/seatup.sh
+	
+
 RUN /etc/init.d/mysql start && \
 	service supervisor start && \
 	supervisorctl reload && \
@@ -79,3 +94,5 @@ RUN /etc/init.d/mysql start && \
 	service apache2 restart && \
 	apachectl restart && \
 	apachectl -t -D DUMP_VHOSTS
+
+CMD /bin/bash
