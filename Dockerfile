@@ -10,6 +10,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 #"export LC_ALL=en_US.UTF-8 && export LANG=en_US.UTF-8" to set up the UTF-8 language sets
 #add-apt-repository php5-5.6 ppa
 #install ppa:ondrej packages
+#RUN echo 'Acquire::http { Proxy "http://172.17.0.2:3142"; };' >> /etc/apt/apt.conf.d/01proxy && \
+RUN apt-get update && apt-get install -y \
 	curl \
 	expect \ 
 	git \
@@ -54,6 +56,25 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') && \
 	sed -i -r "s/DB_PASSWORD=secret/DB_PASSWORD=$SEAT_DB_PASS/" /var/www/seat/.env && \
 	sed -i -r "s/CACHE_DRIVER=file/CACHE_DRIVER=redis/" /var/www/seat/.env && \
 	sed -i -r "s/QUEUE_DRIVER=sync/QUEUE_DRIVER=redis/" /var/www/seat/.env && \
+	sed -i -r "s/Options Indexes FollowSymLinks/Options FollowSymLinks/" /etc/apache2/apache2.conf && \
+	sed -i -r "s/ServerTokens OS/ServerTokens Prod/" /etc/apache2/conf-enabled/security.conf && \
+	sed -i -r "s/ServerSignature On/ServerSignature Off/" /etc/apache2/conf-enabled/security.conf && \
+	unlink /etc/apache2/sites-enabled/000-default.conf && \
+	ln -s /etc/apache2/sites-available/100-seat.local.conf /etc/apache2/sites-enabled/100-seat.local.conf && \
+	php artisan vendor:publish && \
+	php artisan migrate && \
+	php artisan db:seed --class=Seat\\Services\\database\\seeds\\NotificationTypesSeeder && \
+	php artisan db:seed --class=Seat\\Services\\database\\seeds\\ScheduleSeeder && \
+	php artisan eve:update-sde -n
+	
+ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
+ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
+ADD /static/crontab /app/crontab
+
+RUN /etc/init.d/mysql start && \
+	service supervisor start && \
+	supervisorctl reload && \
+	crontab /app/crontab && \
 	a2enmod rewrite && \
 	service apache2 restart && \
 	apachectl restart && \
