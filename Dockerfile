@@ -87,8 +87,6 @@ RUN touch /root/startup.sh && chmod +x /root/startup.sh && \
 	
 
 RUN /etc/init.d/mysql start && \
-	sudo service supervisor start && \
-	supervisorctl reload && \
 	crontab /app/crontab && \
 	a2enmod rewrite && \
 	service apache2 restart && \
