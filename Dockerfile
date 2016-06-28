@@ -83,4 +83,5 @@ RUN /etc/init.d/mysql start && \
 	apachectl restart && \
 	apachectl -t -D DUMP_VHOSTS
 
+EXPOSE 80
 CMD /bin/bash
