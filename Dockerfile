@@ -4,12 +4,6 @@ MAINTAINER schmorrison <schmorrison@gmail.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-#apt-cache line for fast local building
-#install language-pack-en-base because ppa-pubkey is odd character set
-#install software-properties-common to use add-apt-repository
-#"export LC_ALL=en_US.UTF-8 && export LANG=en_US.UTF-8" to set up the UTF-8 language sets
-#add-apt-repository php5-5.6 ppa
-#install ppa:ondrej packages
 #RUN echo 'Acquire::http { Proxy "http://172.17.0.2:3142"; };' >> /etc/apt/apt.conf.d/01proxy
 RUN apt-get update && apt-get install -y \
 	curl \
@@ -61,7 +55,6 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') && \
 	sed -i -r "s/ServerTokens OS/ServerTokens Prod/" /etc/apache2/conf-enabled/security.conf && \
 	sed -i -r "s/ServerSignature On/ServerSignature Off/" /etc/apache2/conf-enabled/security.conf && \
 	unlink /etc/apache2/sites-enabled/000-default.conf && \
-	ln -s /etc/apache2/sites-available/100-seat.local.conf /etc/apache2/sites-enabled/100-seat.local.conf && \
 	php artisan vendor:publish && \
 	php artisan migrate && \
 	php artisan db:seed --class=Seat\\Services\\database\\seeds\\NotificationTypesSeeder && \
