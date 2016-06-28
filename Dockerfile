@@ -65,17 +65,16 @@ ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
 ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
 ADD /static/crontab /app/crontab
 
-RUN touch /root/startup.sh && chmod +x /root/startup.sh && \
-	echo "#!/bin/bash" >> /root/startup.sh &&\
-	echo "service supervisor start && supervisorctl reload && apachectl start" \
-	>> /root/startup.sh && \
-	touch /root/seatup.sh && chmod +x /root/seatup.sh && \
+RUN touch /root/seatup.sh && chmod +x /root/seatup.sh && \
 	echo "#!/bin/bash" >> /root/seatup.sh && \
 	echo "cd /var/www/seat" >> /root/seatup.sh && \
 	echo "service mysql start && redis-server --daemonize yes" >> /root/seatup.sh && \
 	echo "php artisan seat:admin:reset" >> /root/seatup.sh && \
-	echo "php artisan seat:admin:email" >> /root/seatup.sh
-	
+	echo "php artisan seat:admin:email" >> /root/seatup.sh && \
+	touch /root/startup.sh && chmod +x /root/startup.sh && \
+	echo "#!/bin/bash" >> /root/startup.sh &&\
+	echo "service supervisor start && supervisorctl reload && apachectl start" \
+	>> /root/startup.sh
 
 RUN /etc/init.d/mysql start && \
 	crontab /app/crontab && \
@@ -83,5 +82,5 @@ RUN /etc/init.d/mysql start && \
 	service apache2 restart && \
 	apachectl restart && \
 	apachectl -t -D DUMP_VHOSTS
-
+EXPOSE 2552
 CMD /bin/bash
