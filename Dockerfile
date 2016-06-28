@@ -56,6 +56,7 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') && \
 	sed -i -r "s/ServerTokens OS/ServerTokens Prod/" /etc/apache2/conf-enabled/security.conf && \
 	sed -i -r "s/ServerSignature On/ServerSignature Off/" /etc/apache2/conf-enabled/security.conf && \
 	unlink /etc/apache2/sites-enabled/000-default.conf && \
+	ln -s /var/www/seat/public /var/www/html/seat.local && \
 	ln -s /etc/apache2/sites-available/100-seat.local.conf /etc/apache2/sites-enabled/100-seat.local.conf && \
 	php artisan vendor:publish && \
 	php artisan migrate && \
