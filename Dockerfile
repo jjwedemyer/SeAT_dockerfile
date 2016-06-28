@@ -66,6 +66,7 @@ ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
 ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
 ADD /static/crontab /app/crontab
 
+
 RUN touch /root/seatup.sh && chmod +x /root/seatup.sh && \
 	echo "#!/bin/bash" >> /root/seatup.sh && \
 	echo "cd /var/www/seat" >> /root/seatup.sh && \
@@ -82,7 +83,6 @@ RUN /etc/init.d/mysql start && \
 	a2enmod rewrite && \
 	service apache2 restart && \
 	apachectl restart && \
-
 	apachectl -t -D DUMP_VHOSTS
 
 EXPOSE 80
