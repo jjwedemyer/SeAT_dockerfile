@@ -65,7 +65,6 @@ ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
 ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
 ADD /static/crontab /app/crontab
 
-
 RUN touch /root/seatup.sh && chmod +x /root/seatup.sh \
 	&& echo "#!/bin/bash" >> /root/seatup.sh \
 	&& echo "cd /var/www/seat" >> /root/seatup.sh \
@@ -78,7 +77,7 @@ RUN touch /root/seatup.sh && chmod +x /root/seatup.sh \
 	&& echo "service supervisor start && supervisorctl reload && apachectl start" \
 	>> /root/startup.sh \
 	&& unlink /etc/apache2/sites-enabled/000-default.conf \
-	&& ln -s /var/www/seat/public /var/www/html/seat.local \
+	&& ln -s /var/www/seat/public /var/www/html/eve.schmorrison.tk \
 	&& ln -s /etc/apache2/sites-available/100-seat.local.conf /etc/apache2/sites-enabled/100-seat.local.conf
 	
 
