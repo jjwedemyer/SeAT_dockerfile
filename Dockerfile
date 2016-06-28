@@ -4,7 +4,17 @@ MAINTAINER schmorrison <schmorrison@gmail.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+<<<<<<< HEAD
 RUN echo 'Acquire::http { Proxy "http://172.17.0.2:3142"; };' >> /etc/apt/apt.conf.d/01proxy
+=======
+#apt-cache line for fast local building
+#install language-pack-en-base because ppa-pubkey is odd character set
+#install software-properties-common to use add-apt-repository
+#"export LC_ALL=en_US.UTF-8 && export LANG=en_US.UTF-8" to set up the UTF-8 language sets
+#add-apt-repository php5-5.6 ppa
+#install ppa:ondrej packages
+#RUN echo 'Acquire::http { Proxy "http://172.17.0.2:3142"; };' >> /etc/apt/apt.conf.d/01proxy && \
+>>>>>>> parent of 0f78e0d... edits
 RUN apt-get update && apt-get install -y \
 	curl \
 	expect \ 
@@ -65,6 +75,7 @@ ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
 ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
 ADD /static/crontab /app/crontab
 
+<<<<<<< HEAD
 RUN touch /root/seatup.sh && chmod +x /root/seatup.sh && \
 	echo "#!/bin/bash" >> /root/seatup.sh && \
 	echo "cd /var/www/seat" >> /root/seatup.sh && \
@@ -76,12 +87,18 @@ RUN touch /root/seatup.sh && chmod +x /root/seatup.sh && \
 	echo "service supervisor start && supervisorctl reload && apachectl start" \
 	>> /root/startup.sh
 
+=======
+>>>>>>> parent of 0f78e0d... edits
 RUN /etc/init.d/mysql start && \
 	crontab /app/crontab && \
 	a2enmod rewrite && \
 	service apache2 restart && \
 	apachectl restart && \
+<<<<<<< HEAD
 	apachectl -t -D DUMP_VHOSTS
 
 EXPOSE 80
 CMD /bin/bash
+=======
+	apachectl -t -D DUMP_VHOSTS
+>>>>>>> parent of 0f78e0d... edits
