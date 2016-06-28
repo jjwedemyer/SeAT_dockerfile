@@ -55,9 +55,6 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') \
 	&& sed -i -r "s/Options Indexes FollowSymLinks/Options FollowSymLinks/" /etc/apache2/apache2.conf \
 	&& sed -i -r "s/ServerTokens OS/ServerTokens Prod/" /etc/apache2/conf-enabled/security.conf \
 	&& sed -i -r "s/ServerSignature On/ServerSignature Off/" /etc/apache2/conf-enabled/security.conf \
-	&& unlink /etc/apache2/sites-enabled/000-default.conf \
-	&& ln -s /var/www/seat/public /var/www/html/seat.local \
-	&& ln -s /etc/apache2/sites-available/100-seat.local.conf /etc/apache2/sites-enabled/100-seat.local.conf \
 	&& php artisan vendor:publish \
 	&& php artisan migrate \
 	&& php artisan db:seed --class=Seat\\Services\\database\\seeds\\NotificationTypesSeeder \
@@ -78,7 +75,11 @@ RUN touch /root/seatup.sh && chmod +x /root/seatup.sh \
 	&& touch /root/startup.sh && chmod +x /root/startup.sh \
 	&& echo "#!/bin/bash" >> /root/startup.sh \
 	&& echo "service supervisor start && supervisorctl reload && apachectl start" \
-	>> /root/startup.sh
+	>> /root/startup.sh \
+	&& unlink /etc/apache2/sites-enabled/000-default.conf \
+	&& ln -s /var/www/seat/public /var/www/html/seat.local \
+	&& ln -s /etc/apache2/sites-available/100-seat.local.conf /etc/apache2/sites-enabled/100-seat.local.conf
+	
 
 RUN /etc/init.d/mysql start \
 	&& crontab /app/crontab \
