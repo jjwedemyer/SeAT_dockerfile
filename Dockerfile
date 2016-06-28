@@ -14,6 +14,9 @@ RUN echo 'Acquire::http { Proxy "http://172.17.0.2:3142"; };' >> /etc/apt/apt.co
 #add-apt-repository php5-5.6 ppa
 #install ppa:ondrej packages
 #RUN echo 'Acquire::http { Proxy "http://172.17.0.2:3142"; };' >> /etc/apt/apt.conf.d/01proxy && \
+<<<<<<< HEAD
+>>>>>>> parent of 0f78e0d... edits
+=======
 >>>>>>> parent of 0f78e0d... edits
 RUN apt-get update && apt-get install -y \
 	curl \
@@ -76,6 +79,7 @@ ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
 ADD /static/crontab /app/crontab
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 RUN touch /root/seatup.sh && chmod +x /root/seatup.sh && \
 	echo "#!/bin/bash" >> /root/seatup.sh && \
 	echo "cd /var/www/seat" >> /root/seatup.sh && \
@@ -89,16 +93,22 @@ RUN touch /root/seatup.sh && chmod +x /root/seatup.sh && \
 
 =======
 >>>>>>> parent of 0f78e0d... edits
+=======
+>>>>>>> parent of 0f78e0d... edits
 RUN /etc/init.d/mysql start && \
 	crontab /app/crontab && \
 	a2enmod rewrite && \
 	service apache2 restart && \
 	apachectl restart && \
 <<<<<<< HEAD
+<<<<<<< HEAD
 	apachectl -t -D DUMP_VHOSTS
 
 EXPOSE 80
 CMD /bin/bash
+=======
+	apachectl -t -D DUMP_VHOSTS
+>>>>>>> parent of 0f78e0d... edits
 =======
 	apachectl -t -D DUMP_VHOSTS
 >>>>>>> parent of 0f78e0d... edits
