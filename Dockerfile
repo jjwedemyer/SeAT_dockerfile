@@ -72,6 +72,7 @@ RUN touch /root/seatup.sh && chmod +x /root/seatup.sh \
 	&& echo "service mysql start && redis-server --daemonize yes" >> /root/seatup.sh \
 	&& echo "php artisan seat:admin:reset" >> /root/seatup.sh \
 	&& echo "php artisan seat:admin:email" >> /root/seatup.sh \
+	&& echo "./startup.sh" >> /root/seatup.sh \
 	&& touch /root/startup.sh && chmod +x /root/startup.sh \
 	&& echo "#!/bin/bash" >> /root/startup.sh \
 	&& echo "service supervisor start && supervisorctl reload && apachectl start" \
