@@ -82,5 +82,6 @@ RUN /etc/init.d/mysql start && \
 	service apache2 restart && \
 	apachectl restart && \
 	apachectl -t -D DUMP_VHOSTS
+	
 EXPOSE 2552
 CMD /bin/bash
