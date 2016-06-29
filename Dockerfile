@@ -31,6 +31,8 @@ RUN apt-get update && apt-get install -y \
 	php5-curl \
 	php5-gd
 	
+ADD /static /root/static
+	
 RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') \
 	&& sleep 1 \
 	&& SEAT_DB_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') \
@@ -59,11 +61,14 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') \
 	&& php artisan migrate \
 	&& php artisan db:seed --class=Seat\\Services\\database\\seeds\\NotificationTypesSeeder \
 	&& php artisan db:seed --class=Seat\\Services\\database\\seeds\\ScheduleSeeder \
-	&& php artisan eve:update-sde -n
+	&& php artisan eve:update-sde -n \
+	&& mv /root/static/seat.conf /etc/supervisor/conf.d/seat.conf \
+	&& mv /root/static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
+	&& mv /root/static/crontab /app/crontab
 	
-ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
-ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
-ADD /static/crontab /app/crontab
+#ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
+#ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
+#ADD /static/crontab /app/crontab
 
 RUN touch /root/seatup.sh && chmod +x /root/seatup.sh \
 	&& echo "#!/bin/bash" >> /root/seatup.sh \
