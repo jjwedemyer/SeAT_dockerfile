@@ -63,7 +63,7 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') \
 	&& php artisan db:seed --class=Seat\\Services\\database\\seeds\\ScheduleSeeder \
 	&& php artisan eve:update-sde -n \
 	&& mv /root/static/seat.conf /etc/supervisor/conf.d/seat.conf \
-	&& mv /root/static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
+	&& mv /root/static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf \
 	&& mv /root/static/crontab /app/crontab
 	
 #ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
