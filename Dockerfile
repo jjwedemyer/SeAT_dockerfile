@@ -64,10 +64,6 @@ RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') \
 	&& php artisan eve:update-sde -n \
 	&& mv /root/seat.conf /etc/supervisor/conf.d/seat.conf \
 	&& mv /root/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
-	
-#ADD /static/seat.conf /etc/supervisor/conf.d/seat.conf
-#ADD /static/100-seat.local.conf /etc/apache2/sites-available/100-seat.local.conf
-#ADD /static/crontab /app/crontab
 
 RUN touch /root/seatup.sh && chmod +x /root/seatup.sh \
 	&& echo "#!/bin/bash" >> /root/seatup.sh \
