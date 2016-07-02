@@ -73,8 +73,26 @@ RUN touch /root/seatup.sh && chmod +x /root/seatup.sh \
 	&& echo "php artisan seat:admin:email" >> /root/seatup.sh \
 	&& touch /root/startup.sh && chmod +x /root/startup.sh \
 	&& echo "#!/bin/bash" >> /root/startup.sh \
-	&& echo "service supervisor start && supervisorctl reload && apachectl start" \
-	>> /root/startup.sh \
+	&& echo "status=$(ps -ef | grep -v grep | grep supervisor | wc -l)" >> /root/startup.sh \
+	&& echo "if [$status = 0]" >> /root/startup.sh \
+	&& echo "then"  >> /root/startup.sh \
+	&& echo "service start supervisor && supervisorctl reload" >> /root/startup.sh \
+	&& echo "fi" >> /root/startup.sh \
+	&& echo "status=$(ps -ef | grep -v grep | grep mysql | wc -l)" >> /root/startup.sh \
+	&& echo "if [$status = 0]" >> /root/startup.sh \
+	&& echo "then"  >> /root/startup.sh \
+	&& echo "service start mysql" >> /root/startup.sh \
+	&& echo "fi" >> /root/startup.sh \
+	&& echo "status=$(redis-cli ping)" >> /root/startup.sh \
+	&& echo "if [$status = "PONG"]" >> /root/startup.sh \
+	&& echo "then"  >> /root/startup.sh \
+	&& echo "redis-server --daemonize yes" >> /root/startup.sh \
+	&& echo "fi" >> /root/startup.sh \
+	&& echo "status=$(ps -ef | grep -v grep | grep apache2 | wc -l)" >> /root/startup.sh \
+	&& echo "if [$status = 0]" >> /root/startup.sh \
+	&& echo "then"  >> /root/startup.sh \
+	&& echo "service start apache2 && apachectl restart" >> /root/startup.sh \
+	&& echo "fi" >> /root/startup.sh \
 	&& unlink /etc/apache2/sites-enabled/000-default.conf \
 	&& ln -s /var/www/seat/public /var/www/html/eve.schmorrison.tk \
 	&& ln -s /etc/apache2/sites-available/100-seat.local.conf /etc/apache2/sites-enabled/100-seat.local.conf
