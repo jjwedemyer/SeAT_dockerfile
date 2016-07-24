@@ -8,7 +8,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
 	curl \
-	expect \ 
+	expect \
 	git \
 	language-pack-en-base \
 	mysql-server \
@@ -17,10 +17,10 @@ RUN apt-get update && apt-get install -y \
 	screen \
 	supervisor \
 	software-properties-common \
-	wget \ 
-	&& export LC_ALL=en_US.UTF-8 \  
+	wget \
+	&& export LC_ALL=en_US.UTF-8 \
 	&& export LANG=en_US.UTF-8 \
-	&& add-apt-repository ppa:ondrej/php5-5.6 -y \ 
+	&& add-apt-repository ppa:ondrej/php5-5.6 -y \
 	&& apt-get update && apt-get install -y \
 	apache2 \
 	php5 \
@@ -30,9 +30,9 @@ RUN apt-get update && apt-get install -y \
 	php5-mysql \
 	php5-curl \
 	php5-gd
-	
+
 ADD /static /root/
-	
+
 RUN MYSQL_ROOT_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') \
 	&& sleep 1 \
 	&& SEAT_DB_PASS=$(echo -e `date` | md5sum | awk '{ print $1 }') \
@@ -78,7 +78,7 @@ RUN touch /root/seatup.sh && chmod +x /root/seatup.sh \
 	&& unlink /etc/apache2/sites-enabled/000-default.conf \
 	&& ln -s /var/www/seat/public /var/www/html/eve.schmorrison.tk \
 	&& ln -s /etc/apache2/sites-available/100-seat.local.conf /etc/apache2/sites-enabled/100-seat.local.conf
-	
+
 
 RUN /etc/init.d/mysql start \
 	&& crontab /root/crontab \
@@ -88,4 +88,10 @@ RUN /etc/init.d/mysql start \
 	&& apachectl -t -D DUMP_VHOSTS
 
 EXPOSE 80
+EXPOSE 8080
+EXPOSE 25
+EXPOSE 465
+EXPOSE 587
+EXPOSE 8000
+
 CMD /bin/bash
